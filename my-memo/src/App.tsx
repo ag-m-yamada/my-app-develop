@@ -7,10 +7,12 @@ export default function App() {
   const {
     memos,
     deletedMemos,
+    folders,
     currentMemo,
     editingId,
     editingDeletedId,
     showTrash,
+    expandedFolders,
     setEditingId,
     setEditingDeletedId,
     setShowTrash,
@@ -18,6 +20,10 @@ export default function App() {
     createNewMemo,
     deleteMemo,
     restoreMemo,
+    createFolder,
+    deleteFolder,
+    updateFolderName,
+    toggleFolderExpand,
     handlePaste,
   } = useMemos();
 
@@ -26,6 +32,9 @@ export default function App() {
   const [editorWidth, setEditorWidth] = useState(50);
   const [isResizingSidebar, setIsResizingSidebar] = useState(false);
   const [isResizingEditor, setIsResizingEditor] = useState(false);
+  const [newlyCreatedFolderId, setNewlyCreatedFolderId] = useState<
+    number | null
+  >(null);
 
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -68,9 +77,12 @@ export default function App() {
         width={sidebarWidth}
         memos={memos}
         deletedMemos={deletedMemos}
+        folders={folders}
         editingId={editingId}
         editingDeletedId={editingDeletedId}
         showTrash={showTrash}
+        expandedFolders={expandedFolders}
+        newlyCreatedFolderId={newlyCreatedFolderId}
         onSelectMemo={setEditingId}
         onSelectDeletedMemo={setEditingDeletedId}
         onDeleteMemo={deleteMemo}
@@ -78,6 +90,20 @@ export default function App() {
           setShowTrash(!showTrash);
           setEditingDeletedId(null);
         }}
+        onCreateFolder={(parentFolderId) => {
+          const newFolderId = createFolder(parentFolderId);
+          setNewlyCreatedFolderId(newFolderId);
+        }}
+        onDeleteFolder={deleteFolder}
+        onUpdateFolderName={(folderId, newName, _parentFolderId) => {
+          updateFolderName(folderId, newName);
+          if (folderId === newlyCreatedFolderId) {
+            setNewlyCreatedFolderId(null);
+          }
+        }}
+        onToggleFolderExpand={toggleFolderExpand}
+        onCreateMemoInFolder={(folderId) => createNewMemo(folderId)}
+        onCreateMemo={() => createNewMemo()}
         onResizeMouseDown={() => setIsResizingSidebar(true)}
       />
 
@@ -93,14 +119,6 @@ export default function App() {
           onRestore={restoreMemo}
           onResizeMouseDown={() => setIsResizingEditor(true)}
         />
-        {!showTrash && (
-          <button
-            onClick={createNewMemo}
-            className="absolute bottom-10 right-10 w-16 h-16 bg-[#2ecc71] text-white rounded-full shadow-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 text-3xl font-bold z-40"
-          >
-            +
-          </button>
-        )}
       </div>
     </div>
   );

@@ -19,7 +19,7 @@ Tauri公式が用意している「プロジェクト作成用ツール」
 6. npm install --save-dev @types/turndown
 TypeScriptを使っている場合に、ヒント（型定義）をVSCodeに教えてあげるためです。これを入れると、コードを書く時に補完が効くようになります。
 
-7. 画面編集へ
+7. npm i
 
 8. npm run tauri dev
 アプリを動かすコマンドです。これを実行すると、開発中のアプリが起動します。
